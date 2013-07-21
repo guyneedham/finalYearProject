@@ -1,0 +1,141 @@
+# import modules
+from scipy.integrate import odeint
+import matplotlib.pyplot as plt
+import math
+import numpy as np
+import scipy.io
+
+#filepath for MATLAB export
+filepath='/home/gln09/Desktop/GN_Ubiquitination/processive/processive_sampling'
+
+# Define the terms of the equations
+# X = [protein]
+# t = time
+
+# knumber = rate of that reaction
+kon = 1
+
+koffs = []
+koffs=np.arange(0,26,1).tolist()
+k = []
+for i in range(0,5):
+    k.append(0)
+#formation of XuL
+k[0] = 1
+#formation of XuuL
+k[1] = 1
+#formation of XuuuL
+k[2] = 1
+#formation of XuuuuL
+k[3] = 1
+#formation of XuuuuuL
+k[4] = 1
+
+# L = [E3 ligase]
+L = 1
+
+# Parameters, in a tuple
+#parameters = (kon, koff, k, L)
+
+# iX0 = initial [unubiquitinated protein]
+iX0 = 5
+# iLX0 = initial [complex LX0]
+iLX0 = 0
+# iX1uL = initial [complex XuL] 1L
+iX1uL = 0
+# X1u = initial [complex Xu] 1
+iX1u = 0
+# X2uL = initial [complex XuuL] 2L
+iX2uL = 0
+# X2u = initial [Xuu] 2
+iX2u = 0
+# iX3uL = initial [XuuuL] 3L
+iX3uL = 0
+# iX3u = initial [Xuuu] 3
+iX3u = 0
+# iX4uL = initial [XuuuuL] 4L
+iX4uL = 0
+# iX4u = initial [Xuuuu] 4
+iX4u = 0
+# iX5uL = initial [XuuuuuL] 5L
+iX5uL = 0
+# iX5u = initial [Xuuuuu] 5
+iX5u = 0
+
+y = []
+for n in range(0,12):
+    y.append(0)
+y[0] = iX0
+y[1] = iLX0
+y[2] = iX1uL
+y[3] = iX1u
+y[4] = iX2uL
+y[5] = iX2u
+y[6] = iX3uL
+y[7] = iX3u
+y[8] = iX4uL
+y[9] = iX4u
+y[10] = iX5uL
+y[11] = iX5u
+
+ys = []
+x = []
+koff = []
+for n in range(0,6):
+    koff.append(1)
+for n in range(0,len(koffs)):
+    koff[0] = koffs[n]
+    #print "koff here is", koff
+    x.append(koff)
+    #print "x is", x
+    # Parameters, in a tuple
+    parameters = (kon, koff, k, L)
+# The derivative function:
+    def f(y, t, kon, koff, k, L):
+        return (
+            (koff[0]*y[1]-kon*y[0]*L),#dX0/dt
+            (kon*y[0]*L-koff[0]*y[1]-k[0]*y[1]),#dLX0/dt
+            (k[0]*y[1]-koff[1]*y[2]-k[1]*y[2]),#dXuL/dt
+            (koff[1]*y[2]),#dXu/dt
+            (k[1]*y[2]-koff[2]*y[4]-k[2]*y[4]),#dXuuL/dt
+            (koff[2]*y[4]),#dXuu/dt
+            (k[2]*y[4]-koff[3]*y[6]-k[3]*y[6]),#dXuuuL/dt
+            (koff[3]*y[6]),#dXuuu/dt
+            (k[3]*y[6]-koff[4]*y[8]-k[4]*y[8]),#dXuuuuL/dt
+            (koff[4]*y[8]),#dXuuuu/dt
+            (k[4]*y[8]-koff[5]*y[10]),#dXuuuuuL/dt
+            (koff[5]*y[10])#dXuuuuu/dt
+            )
+ 
+# Define the initial concentrations of the protein states
+
+    iC = []
+    for i in range(0,len(y)):
+        iC.append(0)
+    for i in range(0,len(y)):
+        iC[i]=y[i]
+    # Times to evaluate the ODEs.
+    t = range(0, 71, 1)
+
+    # Compute the ODE:
+    res = odeint(f, iC, t, parameters)
+
+    # transpose the matrix
+    transres = np.transpose(res)
+    toappend=[]
+    toappend.append(transres[0][-1])
+    toappend.append(transres[3][-1])
+    toappend.append(transres[5][-1])
+    toappend.append(transres[7][-1])
+    toappend.append(transres[9][-1])
+    toappend.append(transres[11][-1])
+    ys.append(toappend)
+    toappend=[]
+    #print transres
+    #print transres[0][-1]
+    #yhere = (transres[0][-1])/y[0]
+    #ys.append(yhere)
+    #print "ys are ",ys
+#print transres
+
+scipy.io.savemat(filepath, mdict={'ys':ys})

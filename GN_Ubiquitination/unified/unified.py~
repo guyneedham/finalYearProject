@@ -1,0 +1,123 @@
+# import modules
+from scipy.integrate import odeint
+import matplotlib.pyplot as plt
+import math
+import numpy as np
+plt.rcParams['font.size']=20
+plt.rcParams['lines.linewidth']=2.5
+
+# Define the terms of the equations
+# X = [protein]
+# t = time
+
+# knumber = rate of that reaction
+kon = []
+k = []
+koff = 1
+for i in range(1, 6):
+    kon.append(0)
+    k.append(0)
+for n in range(0,5):
+    kon[n]=1
+    k[n]=1
+
+# L = [E3 ligase]
+L = 1
+parameters = (k,kon,koff,L)
+start = 5
+iX0 = start
+iX0L = 0
+iXuL = 0
+iXu = 0
+iXuuL = 0
+iXuu = 0
+iXuuuL = 0
+iXuuu = 0
+iXuuuuL = 0
+iXuuuu = 0
+iXuuuuuL = 0
+iXuuuuu = 0
+
+y = []
+for n in range(1, 13):
+    y.append(0)
+y[0] = iX0
+y[1] = iX0L
+y[2] = iXuL
+y[3] = iXu
+y[4] = iXuuL
+y[5] = iXuu
+y[6] = iXuuuL
+y[7] = iXuuu
+y[8] = iXuuuuL
+y[9] = iXuuuu
+y[10] = iXuuuuuL
+y[11] = iXuuuuu
+
+# The derivative function:
+def f(y, t, k, kon, koff, L):
+    return (((koff*y[1])-(kon[0]*y[0]*L)),#dX0/dt
+            ((kon[0]*y[0]*L)-(koff*y[1])-(k[0]*y[1])),#dX0L/dt
+            ((k[0]*y[1])+(kon[1]*y[3]*L)-(k[1]*y[2])-(koff*y[2])),#dXuL/dt
+            ((koff*y[2])-(kon[1]*y[3]*L)),#dXu/dt
+            ((k[1]*y[2])+(kon[2]*y[5]*L)-(k[2]*y[4])-(koff*y[4])),#dXuuL/dt
+            ((koff*y[4])-(kon[2]*y[5]*L)),#dXuu/dt
+            ((k[2]*y[4])+(kon[3]*y[7]*L)-(k[3]*y[6])-(koff*y[6])),#dXuuuL/dt
+            ((koff*y[6])-(kon[3]*y[7]*L)),#dXuuu/dt
+            ((k[3]*y[6])+(kon[4]*y[9]*L)-(k[4]*y[8])-(koff*y[8])),#dXuuuuL/dt
+            ((koff*y[8])-(kon[4]*y[9]*L)),#dXuuuu/dt
+            ((k[4]*y[8])-(koff*y[10])),#dXuuuuuL/dt
+            ((koff*y[10]))#dXuuuuu/dt
+            )
+iC = []
+for i in range(0,len(y)):
+    iC.append(0)
+for i in range(0,len(y)):
+    iC[i]=y[i]
+t = range(0, 41, 1)
+res = odeint(f,iC,t,parameters)
+transres = np.transpose(res)
+'''
+#Plot as a bar chart
+ys=[]
+for i in range(0,6):
+    ys.append(0)
+ys[0]=(transres[0][-1]/start)*100
+ys[1]=(transres[3][-1]/start)*100
+ys[2]=(transres[5][-1]/start)*100
+ys[3]=(transres[7][-1]/start)*100
+ys[4]=(transres[9][-1]/start)*100
+ys[5]=(transres[11][-1]/start)*100
+N=6
+width=0.5
+ind=np.arange(N)
+fig=plt.figure()
+ax=fig.add_subplot(111)
+rects1=ax.bar(ind,ys,width)
+ax.set_ylabel('Percentage of Total Protein')
+ax.set_title(r'Predicted Protein Percentages from a Unified Model of Polyubiquitination where k$_{off}$ = 500')
+ax.set_xticks(ind+(width/2))
+ax.set_xticklabels((r'X$_0$','X$_u$','X$_{uu}$','X$_{uuu}$','X$_{uuuu}$','X$_{uuuuu}$'))
+ax.legend()
+'''
+#Plot as a line graph
+x = t
+y = []
+for i in range(0,len(iC)):
+    y.append(0)
+for i in range(0,len(y)):
+    #plt.plot(x,transres[i])
+    y[i] = transres[i]    
+plt.plot(x,y[0],label=r'X$_0$')
+plt.plot(x,y[3],label=r'X$_u$')
+plt.plot(x,y[5],label=r'X$_{uu}$')
+plt.plot(x,y[7],label=r'X$_{uuu}$')
+plt.plot(x,y[9],label=r'X$_{uuuu}$')
+plt.plot(x,y[11],label=r'X$_{uuuuu}$',color='black')
+plt.legend(loc=4)
+#plt.title("Mass Action model of a Unified Polyubiquitination Process with Michaelis Menten Kinetics")
+plt.ylabel("Protein Concentration, A.U.")
+plt.xlabel("Time, A.U.",fontsize=20)
+plt.ylim(0,6)
+
+plt.show()

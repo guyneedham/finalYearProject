@@ -1,0 +1,54 @@
+This is BibTeX, Version 0.99d (TeX Live 2011)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: final_report.aux
+The style file: harvard.bst
+Database file #1: references.bib
+Repeated entry---line 333 of file references.bib
+ : @article{finley1994inhibition
+ :                              ,
+I'm skipping whatever remains of this entry
+`editor' is a missing field, not a string, for entry MATLAB:2010
+while executing---line 1236 of file harvard.bst
+Warning--empty institution in Rossum:1995:PRM:869369
+You've used 35 entries,
+            2330 wiz_defined-function locations,
+            755 strings with 10810 characters,
+and the built_in function-call counts, 18100 in all, are:
+= -- 1954
+> -- 873
+< -- 24
++ -- 264
+- -- 256
+* -- 1638
+:= -- 3151
+add.period$ -- 104
+call.type$ -- 35
+change.case$ -- 262
+chr.to.int$ -- 35
+cite$ -- 36
+duplicate$ -- 618
+empty$ -- 1102
+format.name$ -- 358
+if$ -- 3572
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 34
+newline$ -- 177
+num.names$ -- 175
+pop$ -- 259
+preamble$ -- 1
+purify$ -- 296
+quote$ -- 0
+skip$ -- 507
+stack$ -- 0
+substring$ -- 1166
+swap$ -- 134
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 416
+warning$ -- 1
+while$ -- 162
+width$ -- 0
+write$ -- 489
+(There were 2 error messages)
